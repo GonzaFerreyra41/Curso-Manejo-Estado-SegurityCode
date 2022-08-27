@@ -3,28 +3,33 @@ import React from "react";
 const SEGURITY_CODE ="paradigma";
 
 function UseState({ name }) {
- //Estados independientes o simples y dinamicos, depende de lo que escriban los usuarios. 
-     const [value, setValue] = React.useState("");
- //Estados independientes. 
-    const [error, setError] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-   
-    console.log(value)
+ const [state, setState] = React.useState({
+    value: "",
+    error:false,
+    loading:false,
+ }); 
+
+    console.log(state)
 
     React.useEffect(()=>{
         console.log("Empezando el efecto")
-//Validación para que no se renderice constantemente, sino cuando se haga "el llamado a la backend". Simulado por un setTiemout.
 
-       if(!!loading){
+       if(!!state.loading){
         setTimeout(()=>{
             console.log("Haciendo la validación")
-            if(value !== SEGURITY_CODE){
-                setError(true);
+            if(state.value !== SEGURITY_CODE){
+                setState({
+                    ...state,
+                    error:false,
+                    loading: false,
+                })
             }else {
-                setError(false);
+                setState({
+                    ...state,
+                    error:true,
+                    loading:false
+                })
             }
-
-            setLoading(false);
 
             console.log("Terminando la validación")
 
@@ -33,31 +38,35 @@ function UseState({ name }) {
 
         console.log("Terminando el efecto")
 
-    }, [loading]);
+    }, [state.loading]);
 
     return (
         <div>
             <h2>Eliminar {name}</h2>
             <p>Por favor, escriba el codigo de seguridad</p>
 
-            {(error && !loading) && (
+            {(state.error && !state.loading) && (
                 <p>Error: el código es incorrecto</p>
             )}
-             {loading && (
+             {state.loading && (
                 <p>Cargando...</p>
             )}
             <input 
             placeholder="código de seguridad"
-            value={value}
+            value={state.value}
             onChange={(event)=>{
-                // setError(false); solucion n° 2 para quitar el error.
-                setValue(event.target.value);
+                setState({
+                    ...state,
+                    value: event.target.value,
+                })
             }}
             />
             <button
             onClick={() => {
-                // setError(false); solucion n°1 a quitar el error para cuando cargamos.
-                setLoading(true);
+                setState({
+                    ...state,
+                    loading:true
+                })
             }
             }
             >Comprobar</button>
