@@ -3,7 +3,7 @@ import React from "react";
 const SEGURITY_CODE ="paradigma";
 
 function UseState({ name }) {
- //Estados independientes y dinamicos, depende de lo que escriban los usuarios. 
+ //Estados independientes o simples y dinamicos, depende de lo que escriban los usuarios. 
      const [value, setValue] = React.useState("");
  //Estados independientes. 
     const [error, setError] = React.useState(false);
@@ -40,7 +40,7 @@ function UseState({ name }) {
             <h2>Eliminar {name}</h2>
             <p>Por favor, escriba el codigo de seguridad</p>
 
-            {error && (
+            {(error && !loading) && (
                 <p>Error: el código es incorrecto</p>
             )}
              {loading && (
@@ -50,11 +50,16 @@ function UseState({ name }) {
             placeholder="código de seguridad"
             value={value}
             onChange={(event)=>{
+                // setError(false); solucion n° 2 para quitar el error.
                 setValue(event.target.value);
             }}
             />
             <button
-            onClick={() => setLoading(true)}
+            onClick={() => {
+                // setError(false); solucion n°1 a quitar el error para cuando cargamos.
+                setLoading(true);
+            }
+            }
             >Comprobar</button>
         </div>
     );  
