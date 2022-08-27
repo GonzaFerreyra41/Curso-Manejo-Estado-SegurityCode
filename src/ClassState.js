@@ -4,9 +4,9 @@ import { Loading } from "./loading";
 class ClassState extends React.Component {
     constructor(props){
         super(props);
-
+//estados compuestos
         this.state = {
-            error:true,
+            error:false,
             loading:false,
 
         }
