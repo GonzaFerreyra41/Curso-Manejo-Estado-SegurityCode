@@ -2,61 +2,11 @@ import React from "react";
 
 const SEGURITY_CODE ="paradigma";
 
-function UseState({ name }) {
- const [state, setState] = React.useState({
-    value: "",
-    error:false,
-    loading:false,
-    deleted:false,
-    confirmed: false,
- }); 
+function UseReducer({ name }) {
+ const [state, dispatch] = React.useReducer(reducer, initialState);
 
-    const onConfirmed = ()=> {
-        setState({
-            ...state,
-            error:false,
-            loading: false,
-            confirmed: true,
-        });
-    }
-    
-    const onError = () => {
-        setState({
-            ...state,
-            error:true,
-            loading:false
-        });
-    }
-    
-    const onWrite = (newValue) => {
-        setState({
-            ...state,
-            value: newValue,
-        })
-    }
-
-    const onCheck = () => {
-        setState({
-            ...state,
-            loading:true
-        })
-    }
-
-    const onDelete = ()=>{
-        setState({
-            ...state,
-            deleted:true,
-        });
-    } 
-
-    const onReset = ()=>{
-        setState({
-            ...state,
-            confirmed:false,
-            deleted: false,
-            value:"",
-        });
-    }
+ console.log(state)
+   
     React.useEffect(()=>{
         console.log("Empezando el efecto")
 
@@ -64,9 +14,9 @@ function UseState({ name }) {
         setTimeout(()=>{
             console.log("Haciendo la validación")
             if(state.value === SEGURITY_CODE){
-                onConfirmed();
+                dispatch({type: "CONFIRM"});
             }else {
-                onError();
+                dispatch({type: "ERROR"})
             }
 
             console.log("Terminando la validación")
@@ -94,12 +44,13 @@ function UseState({ name }) {
             placeholder="código de seguridad"
             value={state.value}
             onChange={(event)=>{
-                onWrite(event.target.value);
+                dispatch({type:"WRITE", payload: event.target.value})
+                // onWrite(event.target.value);
             }}
             />
             <button
             onClick={() => {
-             onCheck();  
+             dispatch({ type: "CHECK"}); 
             }}
             >Comprobar</button>
         </div>
@@ -111,14 +62,14 @@ function UseState({ name }) {
 
                 <button
                 onClick={()=>{
-                    onDelete();
+                    dispatch({ type: "DELETE"}); 
                 }}
                 > 
                     Sí, eliminar
                 </button>
                 <button
                 onClick={()=>{
-                   onReset();
+                    dispatch({ type: "RESET"}); 
                 }}
                 >
                     No, me arrepentí
@@ -131,15 +82,72 @@ function UseState({ name }) {
                 <p>Elminado con exito</p>
                 <button
                 onClick={()=>{
-                    onReset();
+                    dispatch({ type: "RESET"}); 
+                    // onReset();
                 }}
                 >
                     Resetear, volver atrás
                 </button>
             </React.Fragment>
-        );
-    }     
+        );  
+    } 
 }
-// Nota:  "&&" es un condicional que se traduce como un entonces
-export { UseState };
+const initialState = {
+    value: "",
+    error:false,
+    loading:false,
+    deleted:false,
+    confirmed: false,
+}; 
 
+const reducerObject = (state, payload) => ({
+    'CONFIRM': {
+        ...state,
+        error:false,
+        loading: false,
+        confirmed: true,
+    },
+    "ERROR": {
+        ...state,
+        error: true,
+        loading: false,
+    },
+    "CHECK": {
+        ...state,
+        loading:true,
+    },
+    "DELETE": {
+        ...state,
+        deleted:true,
+    },
+    "RESET":{
+        ...state,
+        confirmed:false,
+        deleted: false,
+        value:"",
+    },
+    "WRITE":{
+        ...state,
+        value: payload,
+    }
+});
+
+
+ // const onWrite = (newValue) => {
+    //     setState({
+    //         ...state,
+    //         value: newValue,
+    //     })
+    // }
+
+
+const reducer = (state, action) => {
+if (reducerObject(state)[action.type]) {
+    return reducerObject(state, action.payload)[action.type];
+}else {
+    return state;
+}
+}
+
+
+export { UseReducer };
